@@ -25,8 +25,8 @@ import { z } from "zod";
 // ── Configuration ──────────────────────────────────────────────────────────
 // The Companion Suitelet URL — update this when deploying to a new account.
 // Set COMPANION_URL as an environment variable in Vercel for security.
-const COMPANION_URL = process.env.COMPANION_URL || 
-  "https://tstdrv2690802.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1189&deploy=1&compid=TSTDRV2690802&ns-at=AAEJ7tMQ2C6P9rBhvCfzY21lWVO4Vb3n36anzPlgFITMjK05y9s";
+const COMPANION_URL = process.env.COMPANION_URL ||
+    "https://tstdrv2690802.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1189&deploy=1&compid=TSTDRV2690802&ns-at=AAEJ7tMQ2C6P9rBhvCfzY21lWVO4Vb3n36anzPlgFITMjK05y9s";
 
 const PORT = process.env.PORT || 3000;
 
@@ -69,74 +69,74 @@ const server = new McpServer({
 
 // ── Tool: ns_readFile ──────────────────────────────────────────────────────
 server.tool(
-  "ns_readFile",
-  "Read a file from the NetSuite File Cabinet by its internal ID. Returns the file name, folder, type, size, and full text content including JavaScript source code.",
-  {
-    fileId: z.number().describe("Internal ID of the file to read (e.g. 2547)"),
-  },
-  async ({ fileId }) => {
-    const result = await callCompanion("ns_readFile", { fileId });
-    return {
-      content: [{
-        type: "text",
-        text: JSON.stringify(result, null, 2),
-      }],
-    };
-  }
+    "ns_readFile",
+    "Read a file from the NetSuite File Cabinet by its internal ID. Returns the file name, folder, type, size, and full text content including JavaScript source code.",
+    {
+      fileId: z.number().describe("Internal ID of the file to read (e.g. 2547)"),
+    },
+    async ({ fileId }) => {
+      const result = await callCompanion("ns_readFile", { fileId });
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2),
+        }],
+      };
+    }
 );
 
 // ── Tool: ns_listFolder ────────────────────────────────────────────────────
 server.tool(
-  "ns_listFolder",
-  "List all files in a NetSuite File Cabinet folder. Accepts either a folder internal ID or a folder path string (e.g. 'SuiteScripts/Sikich').",
-  {
-    folderId:          z.number().optional().describe("Internal ID of the folder"),
-    folderPath:        z.string().optional().describe("Path string to match (e.g. 'SuiteScripts')"),
-    includeSubfolders: z.boolean().optional().describe("Include files in subfolders (default: false)"),
-  },
-  async ({ folderId, folderPath, includeSubfolders }) => {
-    const result = await callCompanion("ns_listFolder", { folderId, folderPath, includeSubfolders });
-    return {
-      content: [{
-        type: "text",
-        text: JSON.stringify(result, null, 2),
-      }],
-    };
-  }
+    "ns_listFolder",
+    "List all files in a NetSuite File Cabinet folder. Accepts either a folder internal ID or a folder path string (e.g. 'SuiteScripts/Sikich').",
+    {
+      folderId:          z.number().optional().describe("Internal ID of the folder"),
+      folderPath:        z.string().optional().describe("Path string to match (e.g. 'SuiteScripts')"),
+      includeSubfolders: z.boolean().optional().describe("Include files in subfolders (default: false)"),
+    },
+    async ({ folderId, folderPath, includeSubfolders }) => {
+      const result = await callCompanion("ns_listFolder", { folderId, folderPath, includeSubfolders });
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2),
+        }],
+      };
+    }
 );
 
 // ── Tool: ns_getInstalledBundles ───────────────────────────────────────────
 server.tool(
-  "ns_getInstalledBundles",
-  "Returns all installed bundles in the NetSuite account with their internal IDs, names, versions, and the complete list of script IDs they own. Use allBundleScriptIds to filter out bundle-owned scripts from a custom script list.",
-  {},
-  async () => {
-    const result = await callCompanion("ns_getInstalledBundles");
-    return {
-      content: [{
-        type: "text",
-        text: JSON.stringify(result, null, 2),
-      }],
-    };
-  }
+    "ns_getInstalledBundles",
+    "Returns all installed bundles in the NetSuite account with their internal IDs, names, versions, and the complete list of script IDs they own. Use allBundleScriptIds to filter out bundle-owned scripts from a custom script list.",
+    {},
+    async () => {
+      const result = await callCompanion("ns_getInstalledBundles");
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2),
+        }],
+      };
+    }
 );
 
 // ── Tool: ns_getScriptWithFile ─────────────────────────────────────────────
 server.tool(
-  "ns_getScriptWithFile",
-  "Returns a NetSuite script record's full metadata combined with the actual JavaScript source code of its script file, plus all deployment records — in a single call. This is the primary tool for deep AI-powered script analysis.",
-  {
-    scriptId: z.number().describe("Internal ID of the NetSuite script record (e.g. 1186)"),
-  },
-  async ({ scriptId }) => {
-    const result = await callCompanion("ns_getScriptWithFile", { scriptId });
-    return {
-      content: [{
-        type: "text",
-        text: JSON.stringify(result, null, 2),
-      }],
-    };
-  }
+    "ns_getScriptWithFile",
+    "Returns a NetSuite script record's full metadata combined with the actual JavaScript source code of its script file, plus all deployment records — in a single call. This is the primary tool for deep AI-powered script analysis.",
+    {
+      scriptId: z.number().describe("Internal ID of the NetSuite script record (e.g. 1186)"),
+    },
+    async ({ scriptId }) => {
+      const result = await callCompanion("ns_getScriptWithFile", { scriptId });
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(result, null, 2),
+        }],
+      };
+    }
 );
 
 // ── Express app + SSE transport ────────────────────────────────────────────
@@ -199,10 +199,47 @@ app.head("/", (req, res) => {
   res.sendStatus(200);
 });
 
+/**
+ * Test endpoint — call any Companion tool directly via browser URL.
+ * Examples:
+ *   GET /test?tool=ns_readFile&fileId=2547
+ *   GET /test?tool=ns_getInstalledBundles
+ *   GET /test?tool=ns_getScriptWithFile&scriptId=1186
+ *   GET /test?tool=ns_listFolder&folderPath=SuiteScripts
+ */
+app.get("/test", async (req, res) => {
+  const { tool, ...params } = req.query;
+
+  if(!tool) {
+    return res.json({
+      message: "Pass ?tool=<toolName>&param=value to test a tool",
+      examples: [
+        "/test?tool=ns_readFile&fileId=2547",
+        "/test?tool=ns_getInstalledBundles",
+        "/test?tool=ns_getScriptWithFile&scriptId=1186",
+        "/test?tool=ns_listFolder&folderPath=SuiteScripts",
+      ],
+    });
+  }
+
+  try {
+    // Convert numeric string params to numbers
+    const parsed = {};
+    for(const [k, v] of Object.entries(params)) {
+      parsed[k] = isNaN(v) ? v : Number(v);
+    }
+    const result = await callCompanion(tool, parsed);
+    res.json(result);
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ── Start ──────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`Sikich MCP Server running on port ${PORT}`);
   console.log(`Health: http://localhost:${PORT}/`);
   console.log(`SSE:    http://localhost:${PORT}/sse`);
+  console.log(`Test:   http://localhost:${PORT}/test`);
   console.log(`Companion: ${COMPANION_URL.split("?")[0]}`);
 });
