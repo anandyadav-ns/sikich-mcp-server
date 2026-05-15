@@ -199,47 +199,10 @@ app.head("/", (req, res) => {
   res.sendStatus(200);
 });
 
-/**
- * Test endpoint — call any Companion tool directly via browser URL.
- * Examples:
- *   GET /test?tool=ns_readFile&fileId=2547
- *   GET /test?tool=ns_getInstalledBundles
- *   GET /test?tool=ns_getScriptWithFile&scriptId=1186
- *   GET /test?tool=ns_listFolder&folderPath=SuiteScripts
- */
-app.get("/test", async (req, res) => {
-  const { tool, ...params } = req.query;
-
-  if(!tool) {
-    return res.json({
-      message: "Pass ?tool=<toolName>&param=value to test a tool",
-      examples: [
-        "/test?tool=ns_readFile&fileId=2547",
-        "/test?tool=ns_getInstalledBundles",
-        "/test?tool=ns_getScriptWithFile&scriptId=1186",
-        "/test?tool=ns_listFolder&folderPath=SuiteScripts",
-      ],
-    });
-  }
-
-  try {
-    // Convert numeric string params to numbers
-    const parsed = {};
-    for(const [k, v] of Object.entries(params)) {
-      parsed[k] = isNaN(v) ? v : Number(v);
-    }
-    const result = await callCompanion(tool, parsed);
-    res.json(result);
-  } catch(e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
 // ── Start ──────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`Sikich MCP Server running on port ${PORT}`);
   console.log(`Health: http://localhost:${PORT}/`);
   console.log(`SSE:    http://localhost:${PORT}/sse`);
-  console.log(`Test:   http://localhost:${PORT}/test`);
   console.log(`Companion: ${COMPANION_URL.split("?")[0]}`);
 });
